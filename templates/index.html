@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>CV Analysis AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+  <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-6">
+    <h1 class="text-2xl font-bold mb-4">IA de Analise de Currículos/Resume Analysis AI</h1>
+    <form id="uploadForm" class="mb-4">
+      <input type="file" name="pdf" accept=".pdf" multiple class="mb-2">
+      <button class="bg-blue-500 text-white px-4 py-2 rounded">Load PDF</button>
+    </form>
+    <div class="mb-4">
+      <input type="text" id="question" class="w-full border px-4 py-2 rounded" placeholder="Digite sua pergunta/Type your question...">
+    </div>
+
+    <div class="mb-4">
+        <label for="language" class="block mb-1 font-semibold">Escolha o idioma da resposta/Choose the language of the answer:</label>
+        <select id="language" class="w-full border px-4 py-2 rounded">
+          <option value="pt">Português/Portuguese</option>
+          <option value="en">Inglês/English</option>
+        </select>
+      </div>
+
+    <button onclick="sendQuestion()" class="bg-green-500 text-white px-4 py-2 rounded">Go</button>
+    <div class="mt-4 bg-gray-100 p-4 rounded" id="answerArea"></div>
+  </div>
+
+  <div class="mt-2 text-sm text-gray-700" id="fileList"></div>
+
+  <script>
+    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const input = e.target.querySelector('input[type="file"]');
+      const files = input.files;
+  
+      if (files.length === 0) {
+        alert("Selecione pelo menos um PDF.");
+        return;
+      }
+  
+      if (files.length > 2) {
+        alert("Você só pode carregar até 2 arquivos.");
+        return;
+      }
+  
+      const fileNames = [];
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append("pdf", file);
+  
+        const res = await fetch("/upload", { method: "POST", body: formData });
+        const data = await res.json();
+        fileNames.push(file.name);
+      }
+  
+      // Mostrar nomes dos arquivos carregados
+      document.getElementById("fileList").innerHTML =
+        "<strong>Arquivos carregados:</strong><ul>" +
+        fileNames.map(name => `<li>${name}</li>`).join("") +
+        "</ul>";
+  
+      alert("Arquivos carregados e vetorizados com sucesso!");
+    });
+  
+    async function sendQuestion() {
+  const question = document.getElementById("question").value;
+  const language = document.getElementById("language").value;
+
+  const res = await fetch("/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question, language })
+  });
+
+  const data = await res.json();
+  document.getElementById("answerArea").innerText = data.answer;
+}
+  </script>
+  
+</body>
+</html>

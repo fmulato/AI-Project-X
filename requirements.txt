@@ -1,0 +1,7 @@
+pymupdf
+faiss-cpu
+numpy
+flask
+openai
+python-
+sentence-transformers
