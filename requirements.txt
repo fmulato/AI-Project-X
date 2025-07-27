@@ -3,5 +3,5 @@ faiss-cpu
 numpy
 flask
 openai
-python-
+python
 sentence-transformers
