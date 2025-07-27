@@ -2,6 +2,6 @@ pymupdf
 faiss-cpu
 numpy
 flask
-openai
-python
 sentence-transformers
+requests
+python-dotenv
